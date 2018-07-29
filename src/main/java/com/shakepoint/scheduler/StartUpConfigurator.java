@@ -20,9 +20,8 @@ public class StartUpConfigurator {
     @Named("fileNameConfiguration")
     private Event<String> configurationEvent;
 
-    @PostConstruct
-    void init(){
+    @PostConstruct public void init() {
         log.info("starting...");
-        configurationEvent.fire("scheduler-config.properties");
+            configurationEvent.fire(System.getProperty("com.shakepoint.scheduler.configuration.file"));
     }
 }
