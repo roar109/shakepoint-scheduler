@@ -1,6 +1,7 @@
 package com.shakepoint.scheduler;
 
 import com.shakepoint.dto.ScheduledExecution;
+import com.shakepoint.dto.TimerDetails;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -14,13 +15,14 @@ public class PropertiesParser {
         private static final String PROPERTIES_SEPARATOR = ".";
         private static final String ENABLED_PROPERTY_NAME = "enabled";
         private static final String QUEUE_PROPERTY_NAME = "queue.name";
-        private static final String PATTERN_PROPERTY_NAME = "pattern";
+        private static final String TIMER_PROPERTY_NAME = "scheduler.timer.attribute";
+
         private static final Logger log = Logger.getLogger(PropertiesParser.class);
         private List<ScheduledExecution> scheduledExecutions;
 
         public PropertiesParser convertProperties(final Properties configurationProperties) {
                 final String availableSchedulers = configurationProperties.getProperty(CONFIGURATION_PROPERTY_NAME);
-
+                log.info(configurationProperties);
                 if (availableSchedulers == null) {
                         log.error("No schedulers found in configuration file");
                         return null;
@@ -53,7 +55,62 @@ public class PropertiesParser {
                         se.setQueueName(String.valueOf(configurationProperties.get(queueName)));
                 }
 
+                //Get scheduler related information
+                readTimerPropertiesIfExists(se, configurationProperties);
+
                 return se;
+        }
+
+        private void readTimerPropertiesIfExists(ScheduledExecution se, final Properties configurationProperties) {
+                TimerDetails td = new TimerDetails();
+
+                final String secondProperty = buildTimerPropertyName(se.getName(), "second");
+
+                if (configurationProperties.containsKey(secondProperty)) {
+                        td.setSecond(String.valueOf(configurationProperties.get(secondProperty)));
+                }
+
+                final String minuteProperty = buildTimerPropertyName(se.getName(), "minute");
+
+                if (configurationProperties.containsKey(minuteProperty)) {
+                        td.setMinute(String.valueOf(configurationProperties.get(minuteProperty)));
+                }
+
+                final String hourProperty = buildTimerPropertyName(se.getName(), "hour");
+
+                if (configurationProperties.containsKey(hourProperty)) {
+                        td.setHour(String.valueOf(configurationProperties.get(hourProperty)));
+                }
+
+                final String dayOfWeekProperty = buildTimerPropertyName(se.getName(), "dayOfWeek");
+
+                if (configurationProperties.containsKey(dayOfWeekProperty)) {
+                        td.setDayOfWeek(String.valueOf(configurationProperties.get(dayOfWeekProperty)));
+                }
+
+                final String dayOfMonthProperty = buildTimerPropertyName(se.getName(), "dayOfMonth");
+
+                if (configurationProperties.containsKey(dayOfMonthProperty)) {
+                        td.setDayOfMonth(String.valueOf(configurationProperties.get(dayOfMonthProperty)));
+                }
+
+                final String monthProperty = buildTimerPropertyName(se.getName(), "month");
+
+                if (configurationProperties.containsKey(monthProperty)) {
+                        td.setMonth(String.valueOf(configurationProperties.get(monthProperty)));
+                }
+
+                final String yearProperty = buildTimerPropertyName(se.getName(), "year");
+
+                if (configurationProperties.containsKey(yearProperty)) {
+                        td.setYear(String.valueOf(configurationProperties.get(yearProperty)));
+                }
+
+                se.setTimerDetails(td);
+        }
+
+        private String buildTimerPropertyName(final String name, final String attribute) {
+                return new StringBuilder(name).append(PROPERTIES_SEPARATOR).append(TIMER_PROPERTY_NAME).append(PROPERTIES_SEPARATOR).append(attribute).toString();
         }
 
         public List<ScheduledExecution> getScheduledExecutions() {

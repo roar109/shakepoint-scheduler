@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,6 +17,8 @@ import java.util.Properties;
 
         @Inject private Logger log;
 
+        @Inject private Event<ScheduledExecution> fireScheduledExecutionEvents;
+
         @Asynchronous @Named("fileNameConfiguration") public void configure(@Observes final String propsFileName) {
                 log.info(String.format("Receiving properties file on path %s", propsFileName));
 
@@ -26,7 +29,12 @@ import java.util.Properties;
                         log.info(String.format("Schedulers found in configuration file %s", configurationProperties.get("schedulers")));
 
                         List<ScheduledExecution> executions = new PropertiesParser().convertProperties(configurationProperties).getScheduledExecutions();
+
                         log.info(executions);
+
+                        for (ScheduledExecution execution : executions) {
+                                fireScheduledExecutionEvents.fire(execution);
+                        }
                 } catch (Exception e) {
                         log.error(e.getMessage(), e);
                 }

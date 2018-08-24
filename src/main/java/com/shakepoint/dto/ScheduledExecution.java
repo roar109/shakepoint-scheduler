@@ -5,15 +5,15 @@ public class ScheduledExecution {
         private String name;
         private boolean enabled;
         private String queueName;
-        private String schedulerExpression;
+        private TimerDetails timerDetails;
 
         public ScheduledExecution() {
         }
 
-        public ScheduledExecution(String name, String queueName, String schedulerExpression) {
+        public ScheduledExecution(String name, String queueName, TimerDetails timerDetails) {
                 this.name = name;
                 this.queueName = queueName;
-                this.schedulerExpression = schedulerExpression;
+                this.timerDetails = timerDetails;
         }
 
         public String getName() {
@@ -40,16 +40,15 @@ public class ScheduledExecution {
                 this.queueName = queueName;
         }
 
-        public String getSchedulerExpression() {
-                return schedulerExpression;
+        public TimerDetails getTimerDetails() {
+                return timerDetails;
         }
 
-        public void setSchedulerExpression(String schedulerExpression) {
-                this.schedulerExpression = schedulerExpression;
+        public void setTimerDetails(TimerDetails timerDetails) {
+                this.timerDetails = timerDetails;
         }
 
         @Override public String toString() {
-                return "ScheduledExecution{" + "name='" + name + '\'' + ", enabled=" + enabled + ", queueName='" + queueName + '\'' + ", schedulerExpression='" + schedulerExpression + '\'' + '}';
+                return "ScheduledExecution{" + "name='" + name + '\'' + ", enabled=" + enabled + ", queueName='" + queueName + '\'' + ", timerDetails=" + timerDetails + '}';
         }
-
 }
